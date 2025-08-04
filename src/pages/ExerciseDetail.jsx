@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import Detail from "../components/Detail";
 import ExerciseVideos from "../components/ExerciseVideos";
 import SimilarExercises from "../components/SimilarExercises";
-import exerciseData from "../data/gifs.json";
+import exerciseData from "../data/exercises_data.json";
 const ExerciseDetail = () => {
   const { id } = useParams();
   const [exerciseDetail, setExerciseDetail] = useState(null);

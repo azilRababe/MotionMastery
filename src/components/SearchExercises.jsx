@@ -1,105 +1,230 @@
-import React, { useEffect, useState, useMemo } from "react";
-// import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import exercisesData from "../data/exercises_data.json";
 
-// import { exerciseOptions, fetchData } from "../utils/fetchData";
-import HorizontalScrollbar from "./HorizontalScrollbar";
-import exercisesData from "../data/gifs.json";
-const SearchExercises = ({ setExercises, bodyPart, setBodyPart }) => {
-  const [search, setSearch] = useState("");
-  const [bodyParts, setBodyParts] = useState([]);
+const SearchExercises = ({ setExercises }) => {
+  const [exerciseName, setExerciseName] = useState(null);
+  const [bodyPart, setBodyPart] = useState(null);
+  const [difficulty, setDifficulty] = useState(null);
+  const [equipment, setEquipment] = useState(null);
+  const [category, setCategory] = useState(null);
+
+  const exerciseNames = [...new Set(exercisesData.map((item) => item.title))];
+  const bodyParts = [...new Set(exercisesData.map((item) => item.body_part))];
+  const difficulties = [
+    ...new Set(
+      exercisesData
+        .map((item) => item.difficulty_level)
+        .filter((level) => level && level !== "Other")
+    ),
+  ];
+  const equipments = [
+    ...new Set(exercisesData.map((item) => item.equipment || "Other")),
+  ];
+  const categories = [
+    ...new Set(
+      exercisesData
+        .map((item) => item.category)
+        .filter((category) => category && category !== "Other")
+    ),
+  ];
+
+  const handleSearch = () => {
+    const filtered = exercisesData.filter((item) => {
+      const matchesName = !exerciseName || item.title === exerciseName;
+      const matchesBodyPart = !bodyPart || item.body_part === bodyPart;
+      const matchesDifficulty =
+        !difficulty || (item.difficulty_level || "Other") === difficulty;
+      const matchesEquipment =
+        !equipment || (item.equipment || "Other") === equipment;
+      const matchesCategory =
+        !category || (item.category || "Other") === category;
+
+      return (
+        matchesName &&
+        matchesBodyPart &&
+        matchesDifficulty &&
+        matchesEquipment &&
+        matchesCategory
+      );
+    });
+
+    setExercises(filtered);
+    // scroll down
+    window.scrollTo({ top: 1500, left: 0, behavior: "smooth" });
+  };
+
+  const handleClear = () => {
+    setExerciseName(null);
+    setBodyPart(null);
+    setDifficulty(null);
+    setEquipment(null);
+    setCategory(null);
+    setExercises(exercisesData);
+  };
 
   useEffect(() => {
-    // Get all unique targetMuscle values for the scrollbar
-    const allBodyParts = [
-      // "all",
-      ...Array.from(new Set(exercisesData.map((item) => item.targetMuscle))),
-    ];
-    setBodyParts(allBodyParts);
-
-    // Set all exercises initially
     setExercises(exercisesData);
   }, [setExercises]);
 
-  const handleSearch = async () => {
-    if (search) {
-      const searchedExercises = exercisesData.filter(
-        (item) =>
-          item.targetMuscle.toLowerCase().includes(search) ||
-          item.title.toLowerCase().includes(search)
-      );
-
-      window.scrollTo({ top: 1800, left: 100, behavior: "smooth" });
-
-      setSearch("");
-      setExercises(searchedExercises);
-    }
-  };
-
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100 p-4">
-      <div className="text-2xl font-bold mb-5 text-center text-red-500">
-        Find the Perfect Move in Seconds
+    <div className="flex flex-col items-center justify-center px-10 min-h-screen">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-6xl">
+        {/* Left side: Text */}
+        <div className="flex flex-col justify-center">
+          <h2 className="text-3xl font-bold text-[#ff5722] mb-4">
+            Find the Perfect Move in Seconds
+          </h2>
+          <p className="text-gray-700 text-md">
+            Whether you're crushing leg day or just starting your fitness
+            journey, our visual library of exercise GIFs has your back. Use the
+            filters to search by name, category, difficulty, or equipment — and
+            master every rep.
+          </p>
+        </div>
+
+        {/* Right side: Filters */}
+        <div className="flex flex-col gap-4">
+          <Autocomplete
+            options={exerciseNames}
+            value={exerciseName}
+            onChange={(e, value) => setExerciseName(value)}
+            renderInput={(params) => (
+              <TextField {...params} label="Exercise Name" color="error" />
+            )}
+            sx={{
+              "& label.Mui-focused": {
+                color: "#ff5722",
+              },
+              "& .MuiInput-underline:after": {
+                borderBottomColor: "#ff5722",
+              },
+              "& .MuiOutlinedInput-root": {
+                "&.Mui-focused fieldset": {
+                  borderColor: "#ff5722",
+                },
+              },
+            }}
+          />
+
+          <Autocomplete
+            options={bodyParts}
+            value={bodyPart}
+            onChange={(e, value) => setBodyPart(value)}
+            renderInput={(params) => (
+              <TextField {...params} label="Body Part" color="error" />
+            )}
+            sx={{
+              "& label.Mui-focused": {
+                color: "#ff5722",
+              },
+              "& .MuiInput-underline:after": {
+                borderBottomColor: "#ff5722",
+              },
+              "& .MuiOutlinedInput-root": {
+                "&.Mui-focused fieldset": {
+                  borderColor: "#ff5722",
+                },
+              },
+            }}
+          />
+
+          <Autocomplete
+            options={difficulties}
+            value={difficulty}
+            onChange={(e, value) => setDifficulty(value)}
+            renderInput={(params) => (
+              <TextField {...params} label="Difficulty" color="error" />
+            )}
+            sx={{
+              "& label.Mui-focused": {
+                color: "#ff5722",
+              },
+              "& .MuiInput-underline:after": {
+                borderBottomColor: "#ff5722",
+              },
+              "& .MuiOutlinedInput-root": {
+                "&.Mui-focused fieldset": {
+                  borderColor: "#ff5722",
+                },
+              },
+            }}
+          />
+
+          <Autocomplete
+            options={equipments}
+            value={equipment}
+            onChange={(e, value) => setEquipment(value)}
+            renderInput={(params) => (
+              <TextField {...params} label="Equipment" color="error" />
+            )}
+            sx={{
+              "& label.Mui-focused": {
+                color: "#ff5722",
+              },
+              "& .MuiInput-underline:after": {
+                borderBottomColor: "#ff5722",
+              },
+              "& .MuiOutlinedInput-root": {
+                "&.Mui-focused fieldset": {
+                  borderColor: "#ff5722",
+                },
+              },
+            }}
+          />
+
+          <Autocomplete
+            options={categories}
+            value={category}
+            onChange={(e, value) => setCategory(value)}
+            renderInput={(params) => (
+              <TextField {...params} label="Category" color="error" />
+            )}
+            sx={{
+              "& label.Mui-focused": {
+                color: "#ff5722",
+              },
+              "& .MuiInput-underline:after": {
+                borderBottomColor: "#ff5722",
+              },
+              "& .MuiOutlinedInput-root": {
+                "&.Mui-focused fieldset": {
+                  borderColor: "#ff5722",
+                },
+              },
+            }}
+          />
+
+          {/* Buttons */}
+          <div className="flex gap-4 mt-2">
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#ff5722",
+                "&:hover": { backgroundColor: "#ff5722cc" },
+              }}
+              onClick={handleSearch}
+              className="hover:scale-105"
+            >
+              Apply Filters
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{
+                color: "#ff5722",
+                borderColor: "#ff5722",
+                "&:hover": { borderColor: "#ff5722cc", color: "#ff5722cc" },
+              }}
+              onClick={handleClear}
+              className="hover:scale-105"
+            >
+              Clear Filters
+            </Button>
+          </div>
+        </div>
       </div>
-      <p className="text-center text-gray-700 mb-5 max-w-2xl">
-        Whether you're crushing leg day or just starting your fitness journey,
-        our visual library of exercise GIFs has your back . Search by category
-        and master every rep with perfect form.
-      </p>
-      <div className="flex justify-center items-center mb-5 max-w-xl w-full">
-        <Autocomplete
-          // onChange={(e) => setSearch(e.target.value.toLowerCase())}
-          // onClick={handleSearch}
-          disableClearable
-          disabledItemsFocusable
-          fullWidth
-          options={bodyParts}
-          // sx={{ width: "350" }}
-          value={bodyPart}
-          onChange={(event, newValue) => {
-            setBodyPart(newValue);
-            setExercises(
-              newValue === "all"
-                ? exercisesData
-                : exercisesData.filter(
-                    (exercise) => exercise.targetMuscle === newValue
-                  )
-            );
-            // Scroll to the exercises section
-            window.scrollTo({ top: 1500, left: 0, behavior: "smooth" });
-          }}
-          className="w-80"
-          renderInput={(params) => (
-            <TextField {...params} label="Target Muscle" color="error" />
-          )}
-        />
-        {/* <input
-          height="76px"
-          value={search}
-          onChange={(e) => setSearch(e.target.value.toLowerCase())}
-          placeholder="Search Exercises"
-          type="text"
-        /> */}
-        {/* <button
-          onClick={handleSearch}
-          className="bg-[#FF2625] text-white py-2 px-4 rounded hover:bg-[#FF2625]/80 transition duration-300 hover:scale-105 hover:shadow-lg cursor-pointer"
-        >
-          Search
-        </button> */}
-      </div>
-      {/* <Box
-        sx={{ position: "relative", width: "100%", p: "20px" }}
-        color={"red"}
-      >
-        <HorizontalScrollbar
-          data={bodyParts}
-          bodyParts
-          setBodyPart={setBodyPart}
-          bodyPart={bodyPart}
-        />
-      </Box> */}
     </div>
   );
 };
