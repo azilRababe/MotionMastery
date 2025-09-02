@@ -4,10 +4,12 @@ import Pagination from "@mui/material/Pagination";
 import ExerciseCard from "./ExerciseCard";
 import Loader from "./Loader";
 import exercisesData from "../data/exercises_data.json";
+import { fetchExerciseImage } from "../utils/fetchData";
 
 const Exercises = ({ exercises, setExercises, bodyPart }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [exercisesPerPage] = useState(10);
+  const [imageUrl, setImageUrl] = useState("/placeholder.jpg");
 
   useEffect(() => {
     let filteredExercises = [];
@@ -18,7 +20,6 @@ const Exercises = ({ exercises, setExercises, bodyPart }) => {
         (exercise) => exercise.body_part === bodyPart
       );
     }
-    setExercises(filteredExercises);
   }, [bodyPart, setExercises]);
 
   // Pagination
