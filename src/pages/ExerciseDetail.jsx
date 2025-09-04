@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-// import { Box } from "@mui/material";
-
-// import { exerciseOptions, fetchData, youtubeOptions } from "../utils/fetchData";
 import Detail from "../components/Detail";
 import ExerciseVideos from "../components/ExerciseVideos";
 import SimilarExercises from "../components/SimilarExercises";
 import exerciseData from "../data/exercises_data.json";
+
 const ExerciseDetail = () => {
   const { id } = useParams();
   const [exerciseDetail, setExerciseDetail] = useState(null);

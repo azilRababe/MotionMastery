@@ -23,5 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 
-# data
-data/exercises_data.json
+# Data files (inside data folder)
+data/*.json
+data/*.csv
+data/*.dat
+data/*.out
+data/*.pid
